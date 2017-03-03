@@ -4,38 +4,67 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Marijan on 02/03/2017.
  */
 public class TextToSpeechActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
-    public static final String TTS_TAG = "speech_tag";
-
-    private static final SimpleDateFormat hour = new SimpleDateFormat("HH", Locale.getDefault());
-    private static final SimpleDateFormat minute = new SimpleDateFormat("mm", Locale.getDefault());
-
+    private static final String MESSAGE_REFERENCE = "/message";
+    
     TextToSpeech textToSpeech;
+    DatabaseReference databaseRef;
+
+    boolean isFirebaseInitDone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         textToSpeech = new TextToSpeech(this, this);
+        databaseRef = FirebaseDatabase.getInstance().getReference(MESSAGE_REFERENCE);
 
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+        databaseRef.limitToLast(1).addChildEventListener(new ChildEventListener() {
+
             @Override
-            public void run() {
-                Timestamp current = new Timestamp(System.currentTimeMillis());
-                textToSpeech.speak("It's " + minute.format(current) + "minutes past" + hour.format(current) + "o'clock", TextToSpeech.QUEUE_FLUSH, null, TTS_TAG);
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                Message message = dataSnapshot.getValue(Message.class);
+
+                if (message != null && isFirebaseInitDone) {
+                    TextSpeaker.speak(textToSpeech, message.getMessage());
+                } else {
+                    isFirebaseInitDone = true;
+                }
             }
-        }, 0, 60 * 1000);
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

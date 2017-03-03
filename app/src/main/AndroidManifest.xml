@@ -9,8 +9,8 @@
 
         <uses-library android:name="com.google.android.things" />
 
-        <!--<activity android:name=".text_to_speech.TextToSpeechActivity">-->
-        <activity android:name="com.marijandroid.android_things.firebase_comms.FirebaseActivity">
+        <activity android:name=".text_to_speech.TextToSpeechActivity">
+        <!--<activity android:name="com.marijandroid.android_things.firebase_comms.FirebaseActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
