@@ -9,7 +9,9 @@
 
         <uses-library android:name="com.google.android.things" />
 
-        <activity android:name=".text_to_speech.TextToSpeechActivity">
+        <activity android:name=".text_to_speech.TextToSpeechActivity"
+            android:screenOrientation="landscape">
+
         <!--<activity android:name="com.marijandroid.android_things.firebase_comms.FirebaseActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
